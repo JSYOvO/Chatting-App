@@ -1,9 +1,6 @@
 // import { Mongo } from "./database/Database";
 // import express from "express";
 // import http from "http";
-
-import { Mongo } from "./database/Database";
-
 // export class Server {
 //     constructor(private mongo: Mongo = new Mongo()) {}
 
@@ -25,14 +22,12 @@ import { Mongo } from "./database/Database";
 
 // new Server().Start().catch((err) => console.error(err));
 
+import { Mongo } from "./database/Database";
+
 const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-
-interface IChat {
-    name: string;
-    message: string;
-}
+import { addUser, getUser, getUsersInRoom } from "./user";
 
 export class Server {
     constructor(private mongo: Mongo = new Mongo()) {}
@@ -40,21 +35,65 @@ export class Server {
         io.on("connection", (socket: any) => {
             let lastRoom: string = "";
 
-            socket.on("joinRoom", (room: string) => {
-                console.log(`${room} JOIN`);
-                if (lastRoom !== "") socket.leave(lastRoom);
-                if (room !== "") socket.join(room);
-            });
+            // socket.on("joinRoom", (room: string) => {
+            //     console.log(`${room} JOIN`);
+            //     if (lastRoom !== "") socket.leave(lastRoom);
+            //     if (room !== "") socket.join(room);
+            // });
 
-            socket.on("message", ({ name, message }: IChat) => {
-                console.log("getMessage");
+            socket.on("sendMessage", (message: string) => {
+                const user = getUser(socket.id);
+
                 if (!lastRoom) {
-                    io.emit("message", {
-                        name,
-                        message,
+                    // io.emit("message", {
+                    //     name,
+                    //     message,
+                    // });
+                    // console.log(
+                    //     "getMessage",
+                    //     user?.room,
+                    //     socket.id,
+                    //     message
+                    // );
+                    io.to(user?.room).emit("message", {
+                        user: user?.name,
+                        text: message,
                     });
                 }
             });
+
+            socket.on(
+                "join",
+                ({ name, room }: any, callback: (e: any) => {}) => {
+                    console.log("join", name, room);
+                    const { error, user } = addUser({
+                        id: socket.id,
+                        name,
+                        room,
+                    });
+
+                    if (error) return callback(error);
+
+                    socket.join(room);
+
+                    socket.emit("message", {
+                        name: "admin",
+                        message: `${name} has joined room ${room}.`,
+                    });
+
+                    // io.to(room).emit("message", {
+                    //     name: "admin",
+                    //     message: `${name} has joined!`,
+                    // });
+
+                    io.to(room).emit("roomData", {
+                        room: room,
+                        users: getUsersInRoom(user?.room),
+                    });
+
+                    // callback();
+                }
+            );
         });
 
         http.listen("4000", () => {

@@ -1,0 +1,8 @@
+.messages {
+    margin: 20px;
+    overflow: auto;
+    flex: auto;
+    border: solid 2px black;
+    background-color: whitesmoke;
+    border-radius: 5px;
+}
