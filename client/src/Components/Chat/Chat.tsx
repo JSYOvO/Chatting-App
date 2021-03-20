@@ -4,6 +4,13 @@ import io from "socket.io-client";
 import InfoBar from "../InfoBar/InfoBar";
 import Input from "../Input/Input";
 import Messages from "../Messages/Messages";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 import "./Chat.css";
 
 let socket: any;
@@ -19,14 +26,16 @@ const Chat: React.FC<Chat> = ({ location }: any) => {
     const [room, setRoom] = useState<string>("");
     const [users, setUsers] = useState<string>("");
     const [message, setMessage] = useState<IMessage>();
-    const [messages, setMessages] = useState<IMessage[]>();
+    const [messages, setMessages] = useState<IMessage[]>([]);
+    const [isDup, setIsDup] = useState<boolean>(false);
+    const [dupChecked, setDupChecked] = useState<boolean>(false);
+    const dupInputRef = React.useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const { name, room } = queryString.parse(location.search);
         socket = io.connect("http://localhost:4000");
         name && setName(name as string);
         room && setRoom(room as string);
-
         socket.emit("join", { name, room }, (error: any) => {
             if (error) {
                 alert(error);
@@ -35,13 +44,21 @@ const Chat: React.FC<Chat> = ({ location }: any) => {
     }, [location.search]);
 
     useEffect(() => {
-        console.log("NEW MESSAGE COLLECTING");
         socket.on("message", (message: IMessage) => {
-            console.log(messages);
-            setMessages((messages) => [...messages!, message]);
+            setMessages((messages?) => [...messages!, message]);
         });
         socket.on("roomData", ({ room, users }: any) => {
-            console.log(room, users);
+            console.log("roomData", room, users);
+        });
+        socket.on("duplicate", () => {
+            console.log("duplicate");
+            setIsDup(true);
+            setName("");
+            dupInputRef?.current?.focus();
+        });
+        socket.on("non-duplicate", () => {
+            console.log("non-duplicate");
+            setDupChecked(true);
         });
     }, []);
 
@@ -51,6 +68,10 @@ const Chat: React.FC<Chat> = ({ location }: any) => {
         if (message) {
             socket.emit("sendMessage", message);
         }
+    };
+
+    const checkDup = () => {
+        socket.emit("validateID", { name, room });
     };
 
     return (
@@ -64,6 +85,58 @@ const Chat: React.FC<Chat> = ({ location }: any) => {
                     sendMessage={sendMessage}
                 />
             </div>
+            <Dialog
+                open={isDup}
+                // onClose={() => setIsDup(false)}
+                aria-labelledby="form-dialog-title"
+            >
+                <DialogTitle id="form-dialog-title">
+                    Your nickname has been set.
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Set a new nickname and check the duplicate
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="name"
+                        type="text"
+                        value={name}
+                        fullWidth
+                        color="secondary"
+                        ref={dupInputRef}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={(e) => checkDup()}
+                        color="primary"
+                    >
+                        Check Duplicate
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            setIsDup(false);
+                            socket.emit(
+                                "join",
+                                { name, room },
+                                (error: any) => {
+                                    if (error) {
+                                        alert(error);
+                                    }
+                                }
+                            );
+                        }}
+                        color="primary"
+                        disabled={!dupChecked}
+                    >
+                        Done
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

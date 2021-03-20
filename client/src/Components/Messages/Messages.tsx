@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // import ScrollToBottom from "react-scroll-to-bottom";
 
@@ -9,17 +9,20 @@ interface IMessage {
     user: string;
     text: string;
 }
-interface IMessages {
+interface Messages {
     messages: IMessage[];
     name: string;
 }
-
-const Messages = ({ messages, name }: IMessages) => {
+const Messages = ({ messages, name }: Messages) => {
     // <ScrollToBottom className="messages">
+    const messagesRef = React.useRef<HTMLDivElement>(null);
 
-    console.log(messages, name);
+    console.log(messages);
+    useEffect(() => {
+        messagesRef.current?.scrollIntoView({ behavior: "smooth" });
+    });
     return (
-        <div>
+        <div ref={messagesRef}>
             {messages?.map((message, i) => (
                 <div key={i}>
                     <Message message={message} name={name} />

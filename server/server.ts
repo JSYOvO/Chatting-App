@@ -27,7 +27,7 @@ import { Mongo } from "./database/Database";
 const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-import { addUser, getUser, getUsersInRoom } from "./user";
+import { addUser, checkDup, getUser, getUsersInRoom } from "./user";
 
 export class Server {
     constructor(private mongo: Mongo = new Mongo()) {}
@@ -35,31 +35,35 @@ export class Server {
         io.on("connection", (socket: any) => {
             let lastRoom: string = "";
 
-            // socket.on("joinRoom", (room: string) => {
-            //     console.log(`${room} JOIN`);
-            //     if (lastRoom !== "") socket.leave(lastRoom);
-            //     if (room !== "") socket.join(room);
-            // });
-
             socket.on("sendMessage", (message: string) => {
                 const user = getUser(socket.id);
 
                 if (!lastRoom) {
-                    // io.emit("message", {
-                    //     name,
-                    //     message,
-                    // });
-                    // console.log(
-                    //     "getMessage",
-                    //     user?.room,
-                    //     socket.id,
-                    //     message
-                    // );
                     io.to(user?.room).emit("message", {
                         user: user?.name,
                         text: message,
                     });
                 }
+            });
+
+            socket.on("validateID", ({ name, room }: any) => {
+                const { error, existingUser } = checkDup({
+                    id: socket.id,
+                    name,
+                    room,
+                });
+
+                console.log(existingUser, error);
+
+                if (error) {
+                    console.log("DUP");
+
+                    socket.emit("duplicate");
+                } else {
+                    console.log("NONDUP");
+                    socket.emit("non-duplicate");
+                }
+                return;
             });
 
             socket.on(
@@ -72,26 +76,22 @@ export class Server {
                         room,
                     });
 
-                    if (error) return callback(error);
+                    if (error) {
+                        socket.emit("duplicate");
+                        return;
+                    }
 
                     socket.join(room);
 
-                    socket.emit("message", {
-                        name: "admin",
-                        message: `${name} has joined room ${room}.`,
+                    io.to(user?.room).emit("message", {
+                        user: "admin",
+                        text: `${name} has joined room ${room}.`,
                     });
-
-                    // io.to(room).emit("message", {
-                    //     name: "admin",
-                    //     message: `${name} has joined!`,
-                    // });
 
                     io.to(room).emit("roomData", {
                         room: room,
                         users: getUsersInRoom(user?.room),
                     });
-
-                    // callback();
                 }
             );
         });

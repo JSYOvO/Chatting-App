@@ -3,35 +3,45 @@ import React from "react";
 import "./Message.css";
 
 // import ReactEmoji from "react-emoji";
-
-const Message = ({ message: { text, user }, name }: any) => {
+interface IMessage {
+    user: string;
+    text: string;
+}
+interface Message {
+    message: IMessage;
+    name: string;
+}
+const Message = ({ message, name }: Message) => {
     let isSentByCurrentUser = false;
 
     const trimmedName = name.trim().toLowerCase();
 
-    if (user === trimmedName) {
+    console.log(message?.user);
+
+    if (message?.user === trimmedName) {
         isSentByCurrentUser = true;
     }
 
+    console.log(message);
     return isSentByCurrentUser ? (
         <div className="messageContainer justifyEnd">
             <p className="sentText pr-10">{trimmedName}</p>
             <div className="messageBox backgroundBlue">
                 <p className="messageText colorWhite">
-                    {/* {ReactEmoji.emojify(text)} */}
-                    {text}
+                    {message?.text}
                 </p>
             </div>
         </div>
+    ) : message?.user == "admin" ? (
+        <div className="messageTextAdmin">{message?.text}</div>
     ) : (
         <div className="messageContainer justifyStart">
             <div className="messageBox backgroundLight">
                 <p className="messageText colorDark">
-                    {/* {ReactEmoji.emojify(text)} */}
-                    {text}
+                    {message?.text}
                 </p>
             </div>
-            <p className="sentText pl-10 ">{user}</p>
+            <p className="sentText pl-10 ">{message?.user}</p>
         </div>
     );
 };

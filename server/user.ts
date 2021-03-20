@@ -29,3 +29,11 @@ export const getUsersInRoom = (room: string | undefined) =>
 
 export const getUser = (id: string) =>
     users.find((user: IUser) => user.id === id);
+
+export const checkDup = ({ id, name, room }: IUser) => {
+    const existingUser = users.find(
+        (user: IUser) => user.room === room && user.name === name
+    );
+    if (existingUser) return { error: "Username is taken." };
+    return { existingUser };
+};

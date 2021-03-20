@@ -19,6 +19,10 @@
     vertical-align: middle;
 }
 
+.messageTextAdmin {
+    text-align: center;
+}
+
 .messageContainer {
     display: flex;
     justify-content: flex-end;
