@@ -16,6 +16,7 @@ interface IUser {
     name: string;
     room: string;
 }
+const PORT = process.env.PORT || 4000;
 
 export class Server {
     constructor() {} // private mongo: Mongo = new Mongo()
@@ -89,7 +90,7 @@ export class Server {
             );
         });
 
-        http.listen("4000", () => {
+        http.listen(PORT, () => {
             console.log(`Server is running on port 4000`);
         });
     }
