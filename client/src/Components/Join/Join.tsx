@@ -29,6 +29,11 @@ const Join: React.FC<Join> = ({}) => {
                         onChange={(
                             event: React.ChangeEvent<HTMLInputElement>
                         ) => setRoom(event.target.value)}
+                        onKeyPress={(e) =>
+                            e.key === "Enter"
+                                ? (document.location.href = `/chat?name=${name}&room=${room}`)
+                                : null
+                        }
                     />
                 </div>
                 <Link

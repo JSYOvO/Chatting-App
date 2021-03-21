@@ -1,8 +1,11 @@
 .messages {
-    margin: 20px;
+    /* margin: 20px; */
     overflow: auto;
     flex: auto;
-    border: solid 2px black;
+    border: solid 3px black;
     background-color: whitesmoke;
     border-radius: 5px;
+    overflow-y: scroll;
+    margin-top: 10px;
+    padding: 5px;
 }

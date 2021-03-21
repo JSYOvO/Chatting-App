@@ -1,6 +1,10 @@
 .form {
     display: flex;
     /* border-top: 2px solid #d3d3d3; */
+    margin-top: 5px;
+    margin-bottom: 0;
+    align-self: center;
+    /* height: 20px; */
 }
 
 .input {
@@ -8,7 +12,9 @@
     border-radius: 0;
     padding: 5%;
     width: 80%;
-    font-size: 1.2em;
+    font-size: 0.9em;
+    height: inherit;
+    background-color: inherit;
 }
 
 input:focus,
@@ -18,13 +24,13 @@ select:focus {
 }
 
 .sendButton {
-    color: black !important;
+    /* color: black !important; */
     text-transform: uppercase;
     text-decoration: none;
-    background: #fef1d1;
+    background: inherit;
     padding: 20px;
     display: inline-block;
     border: none;
     width: 20%;
-    border: solid 2px black;
+    /* border: solid 2px black; */
 }

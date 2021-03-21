@@ -1,7 +1,7 @@
 .messageBox {
     background: #f3f3f3;
     border-radius: 20px;
-    padding: 5px 20px;
+    padding: 5px 10px;
     color: white;
     display: inline-block;
     max-width: 80%;
@@ -11,7 +11,7 @@
     width: 100%;
     letter-spacing: 0;
     float: left;
-    font-size: 1.1em;
+    font-size: 0.9em;
     word-wrap: break-word;
 }
 
@@ -27,7 +27,8 @@
     display: flex;
     justify-content: flex-end;
     padding: 0 5%;
-    margin-top: 3px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .sentText {
@@ -63,9 +64,12 @@
 }
 
 .backgroundBlue {
-    background: #2979ff;
+    background: #ffc941;
 }
 
-.backgroundLight {
-    background: #f3f3f3;
+.backgroundDark {
+    background: #353535;
+}
+.maxWidth {
+    max-width: 40%;
 }

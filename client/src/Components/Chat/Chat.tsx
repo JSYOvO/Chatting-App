@@ -74,10 +74,15 @@ const Chat: React.FC<Chat> = ({ location }: any) => {
         socket.emit("validateID", { name, room });
     };
 
+    const handleClickBack = () => {
+        console.log("LOGOUT!!");
+        socket.emit("out", { name, room });
+    };
+
     return (
         <div className="outerContainer">
             <div className="container">
-                <InfoBar room={room} />
+                <InfoBar room={room} callback={handleClickBack} />
                 <Messages messages={messages!} name={name} />
                 <Input
                     message={message!}

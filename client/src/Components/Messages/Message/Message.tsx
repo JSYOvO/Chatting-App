@@ -16,28 +16,25 @@ const Message = ({ message, name }: Message) => {
 
     const trimmedName = name.trim().toLowerCase();
 
-    console.log(message?.user);
-
     if (message?.user === trimmedName) {
         isSentByCurrentUser = true;
     }
 
-    console.log(message);
     return isSentByCurrentUser ? (
         <div className="messageContainer justifyEnd">
             <p className="sentText pr-10">{trimmedName}</p>
-            <div className="messageBox backgroundBlue">
-                <p className="messageText colorWhite">
+            <div className="messageBox backgroundBlue maxWidth">
+                <p className="messageText colorDark">
                     {message?.text}
                 </p>
             </div>
         </div>
-    ) : message?.user == "admin" ? (
+    ) : message?.user === "admin" ? (
         <div className="messageTextAdmin">{message?.text}</div>
     ) : (
         <div className="messageContainer justifyStart">
-            <div className="messageBox backgroundLight">
-                <p className="messageText colorDark">
+            <div className="messageBox backgroundDark maxWidth">
+                <p className="messageText colorWhite">
                     {message?.text}
                 </p>
             </div>

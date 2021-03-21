@@ -29,13 +29,15 @@ const Input: React.FC<Input> = ({
                 onChange={({ target: { value } }) =>
                     setMessage(value)
                 }
-                onKeyPress={(event) =>
-                    event.key === "Enter" ? sendMessage(event) : null
+                onKeyPress={(e) =>
+                    e.key === "Enter"
+                        ? (sendMessage(e), setMessage(""))
+                        : null
                 }
             />
             <button
                 className="sendButton"
-                onClick={(e) => sendMessage(e)}
+                onClick={(e) => (sendMessage(e), setMessage(""))}
             >
                 Send
             </button>

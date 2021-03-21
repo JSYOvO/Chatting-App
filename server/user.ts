@@ -37,3 +37,8 @@ export const checkDup = ({ id, name, room }: IUser) => {
     if (existingUser) return { error: "Username is taken." };
     return { existingUser };
 };
+export const deleteUser = ({ id, name, room }: IUser) => {
+    const deleteIdx = users.indexOf({ id, name, room });
+    users.splice(deleteIdx, 1);
+    console.log("afterDelete", users);
+};
