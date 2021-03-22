@@ -20,6 +20,7 @@ interface IMessage {
     text: string;
 }
 interface Chat {}
+const SERVER_URL = `https://heroku-chattingweb-wotjq5113.herokuapp.com/`;
 
 const Chat: React.FC<Chat> = ({ location }: any) => {
     const [name, setName] = useState<string>("");
@@ -33,7 +34,7 @@ const Chat: React.FC<Chat> = ({ location }: any) => {
 
     useEffect(() => {
         const { name, room } = queryString.parse(location.search);
-        socket = io.connect("http://localhost:4000");
+        socket = io.connect(SERVER_URL);
         name && setName(name as string);
         room && setRoom(room as string);
         socket.emit("join", { name, room }, (error: any) => {
