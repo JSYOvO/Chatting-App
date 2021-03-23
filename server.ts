@@ -9,15 +9,14 @@ import {
     getUsersInRoom,
 } from "./user";
 
-interface IUser {
-    id: string;
+interface IUserInfo {
     name: string;
     room: string;
 }
 const PORT = process.env.PORT || 4000;
 
 export class Server {
-    constructor() {} // private mongo: Mongo = new Mongo()
+    constructor() {}
     public async Start() {
         io.on("connection", (socket: any) => {
             let lastRoom: string = "";
@@ -33,7 +32,7 @@ export class Server {
                 }
             });
 
-            socket.on("validateID", ({ name, room }: any) => {
+            socket.on("validateID", ({ name, room }: IUserInfo) => {
                 const { error, existingUser } = checkDup({
                     id: socket.id,
                     name,
@@ -50,7 +49,7 @@ export class Server {
                 return;
             });
 
-            socket.on("out", ({ name, room }: any) => {
+            socket.on("out", ({ name, room }: IUserInfo) => {
                 deleteUser({ id: socket.id, name, room });
                 io.to(room).emit("message", {
                     user: "admin",
@@ -61,7 +60,10 @@ export class Server {
 
             socket.on(
                 "join",
-                ({ name, room }: any, callback: (e: any) => {}) => {
+                (
+                    { name, room }: IUserInfo,
+                    callback: (e: any) => {}
+                ) => {
                     const { error, user } = addUser({
                         id: socket.id,
                         name,
