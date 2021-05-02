@@ -3,9 +3,9 @@
     "name": "Random Chatting Web PWA",
     "icons": [
         {
-            "src": "/images/favicon.ico",
-            "type": "image/x-icon",
-            "sizes": "64x64 32x32 24x24 16x16"
+            "src": "/images/icon.png",
+            "type": "image/png",
+            "sizes": "1024x1024"
         }
     ],
     "start_url": ".",
